@@ -1,0 +1,45 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\Lenovo\auth-access-control-audit\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Lenovo\auth-access-control-audit
+collecting ... collected 37 items
+
+tests/test_access_control.py::test_unauthenticated_user_cannot_read_record PASSED [  2%]
+tests/test_access_control.py::test_owner_can_read_own_record PASSED      [  5%]
+tests/test_access_control.py::test_user_cannot_read_another_users_record PASSED [  8%]
+tests/test_access_control.py::test_user_sees_only_owned_records PASSED   [ 10%]
+tests/test_access_control.py::test_unauthenticated_user_cannot_access_admin PASSED [ 13%]
+tests/test_access_control.py::test_regular_user_cannot_access_admin PASSED [ 16%]
+tests/test_access_control.py::test_admin_can_access_admin PASSED         [ 18%]
+tests/test_access_control.py::test_inconsistent_session_role_is_denied_and_cleared PASSED [ 21%]
+tests/test_access_control.py::test_login_rejects_missing_csrf_token PASSED [ 24%]
+tests/test_access_control.py::test_logout_rejects_missing_csrf_token PASSED [ 27%]
+tests/test_access_control.py::test_security_headers_present PASSED       [ 29%]
+tests/test_access_control.py::test_login_rejects_invalid_credentials PASSED [ 32%]
+tests/test_access_control.py::test_login_rejects_nonexistent_user PASSED [ 35%]
+tests/test_access_control.py::test_logout_clears_session PASSED          [ 37%]
+tests/test_access_control.py::test_csrf_token_returned_on_login_get PASSED [ 40%]
+tests/test_access_control.py::test_create_record_success PASSED          [ 43%]
+tests/test_access_control.py::test_create_record_rejects_missing_csrf PASSED [ 45%]
+tests/test_access_control.py::test_create_record_rejects_missing_title PASSED [ 48%]
+tests/test_access_control.py::test_create_record_rejects_empty_title PASSED [ 51%]
+tests/test_access_control.py::test_create_record_unauthenticated_rejected PASSED [ 54%]
+tests/test_access_control.py::test_update_own_record_success PASSED      [ 56%]
+tests/test_access_control.py::test_update_record_rejects_missing_csrf PASSED [ 59%]
+tests/test_access_control.py::test_update_record_rejects_missing_title PASSED [ 62%]
+tests/test_access_control.py::test_update_another_users_record_rejected PASSED [ 64%]
+tests/test_access_control.py::test_update_nonexistent_record_rejected PASSED [ 67%]
+tests/test_access_control.py::test_update_record_unauthenticated_rejected PASSED [ 70%]
+tests/test_access_control.py::test_delete_own_record_success PASSED      [ 72%]
+tests/test_access_control.py::test_delete_record_rejects_missing_csrf PASSED [ 75%]
+tests/test_access_control.py::test_delete_another_users_record_rejected PASSED [ 78%]
+tests/test_access_control.py::test_delete_nonexistent_record_rejected PASSED [ 81%]
+tests/test_access_control.py::test_delete_record_unauthenticated_rejected PASSED [ 83%]
+tests/test_access_control.py::test_created_record_owned_by_creator PASSED [ 86%]
+tests/test_access_control.py::test_cannot_specify_owner_on_create PASSED [ 89%]
+tests/test_access_control.py::test_create_record_rejects_null_title PASSED [ 91%]
+tests/test_access_control.py::test_create_record_rejects_non_string_title PASSED [ 94%]
+tests/test_access_control.py::test_update_record_rejects_null_title PASSED [ 97%]
+tests/test_access_control.py::test_update_record_rejects_non_string_title PASSED [100%]
+
+============================= 37 passed in 5.76s ==============================
