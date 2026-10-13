@@ -39,13 +39,12 @@ Evaluate the authentication and authorization controls of a minimal Flask applic
 
 1. **Static code review** of all application modules (`app/__init__.py`, `app/auth.py`, `app/records.py`, `app/admin.py`, `app/models.py`)
 2. **Automated test execution** via pytest (37 tests) covering authentication, authorization, CSRF, input validation, and security headers
-3. **Adversarial test-case verification** using Flask test client to manually exercise:
+3. **Automated test coverage** of the following security scenarios:
    - IDOR/BOLA across GET, POST, PUT, DELETE
    - Mass assignment attempts
    - Session/role tampering
    - Malformed input handling
    - Security header presence
-   (Results confirmed by automated regression tests)
 
 ---
 
@@ -67,21 +66,21 @@ Evaluate the authentication and authorization controls of a minimal Flask applic
 
 ## 5. Findings
 
-### 5.1 Remediated Issue: Input Validation Defect (CVE-None, Internal)
+### 5.1 Remediated Issue: Improper Input Validation Caused HTTP 500 Responses
 
 | Field | Value |
 |-------|-------|
-| **Title** | Null/Non-String Title Causes Unhandled Exception (500) |
-| **Severity** | Medium — Local DoS via malformed request (qualitative assessment; no formal CVSS calculated) |
+| **Title** | Improper Input Validation Caused HTTP 500 Responses |
+| **Severity** | Medium (qualitative) — The defect caused HTTP 500 responses to malformed input (null or non-string title) in a local synthetic application. No denial-of-service condition was demonstrated. |
 | **Component** | `app/records.py` — `create_record()` and `update_record()` |
 | **Reproduction** | Send `POST /records` or `PUT /records/<id>` with JSON `{"title": null, "content": "x"}` or `{"title": 123, "content": "x"}` with valid CSRF token and authenticated session |
 | **Expected** | HTTP 400 with validation error |
 | **Actual (Before Fix)** | `AttributeError: 'NoneType' object has no attribute 'strip'` → HTTP 500 |
-| **Impact** | Authenticated users could trigger server errors; potential DoS; error stack traces could leak internals if debug enabled |
+| **Impact** | Authenticated users could trigger server errors; error stack traces could leak internals if debug enabled |
 | **Remediation** | Added `isinstance(title, str)` and `title.strip()` validation before processing; returns 400 "Title is required" |
 | **Verification** | Tests `test_create_record_rejects_null_title`, `test_create_record_rejects_non_string_title`, `test_update_record_rejects_null_title`, `test_update_record_rejects_non_string_title` — all pass |
 
-> **Status:** **REMEDIATED** — Fixed in commit prior to final test run. No longer exploitable.
+> **Status:** **REMEDIATED** — Remediated in the current code and covered by regression tests.
 
 ---
 
@@ -106,10 +105,10 @@ Evaluate the authentication and authorization controls of a minimal Flask applic
 | Passed | 37 |
 | Failed | 0 |
 | Exit status | 0 |
-| Duration | ~5.5 seconds |
+| Duration | 7.37 seconds |
 | Evidence file | `evidence/pytest-final.txt` |
 
-**Test Categories:**
+**Test Categories (non-exclusive; categories overlap, do not sum to total):**
 - Authentication & session: 7 tests
 - Horizontal authorization (user isolation): 8 tests
 - Vertical authorization (admin vs user): 3 tests
@@ -123,9 +122,9 @@ Evaluate the authentication and authorization controls of a minimal Flask applic
 ## 7. Limitations
 
 1. **Local-only synthetic environment** — No network exposure, no real users, no production traffic patterns.
-2. **No external dependency scanning** — Only Flask and stdlib used; no SAST/DAST tools run.
+2. **No dependency vulnerability scanning** — The application uses Flask, Flask-WTF, Werkzeug, pytest, and their transitive dependencies; no SAST/DAST or dependency scanning tools were run.
 3. **No business logic testing beyond authorization** — No file upload, SSRF, XXE, deserialization, or template injection vectors exist.
-4. **Client-side session storage** — Signed cookies expose session structure to client; not tested for tampering beyond role field.
+4. **Client-side session storage** — Flask's default session cookies are signed (integrity-protected) but not encrypted; session data is visible to the client. Tampering beyond the role field was not assessed.
 5. **No password complexity enforcement** — Synthetic passwords only; no policy validation.
 6. **No concurrent session limits** — Multiple logins per user allowed.
 
