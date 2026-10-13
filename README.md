@@ -78,15 +78,17 @@ See `evidence/pytest-final.txt` for full output.
 - `docs/security-assessment-report.md` — Full security assessment with findings
 - `docs/test-plan.md` — 32 planned test cases across 7 categories
 - `docs/app-design.md` — Application architecture and route table
-- `evidence/pytest-final.txt` — Automated test execution evidence
+- `evidence/pytest-final.txt` — Evidence of 37 executed automated tests
 
-## Synthetic Accounts (Local-Only)
+#### Synthetic Accounts (Local-Only)
 
-| Username | Role | Password |
-|----------|------|----------|
-| `alice` | `user` | `Secret123!` |
-| `bob` | `user` | `Secret123!` |
-| `admin` | `admin` | `AdminPass456!` |
+| Username | Role |
+|----------|------|
+| `alice` | `user` |
+| `bob` | `user` |
+| `admin` | `admin` |
+
+> **Note:** Demo credentials are intended for local testing only. A separate local-only setup guide still needs to be created. Plaintext passwords are intentionally omitted from this public README. Never reuse synthetic credentials in production.
 
 > **Note:** These are synthetic credentials for local testing only. Never reuse in production.
 
