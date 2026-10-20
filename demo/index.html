@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication & Access Control Audit | Simulated Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container header__inner">
+            <div class="brand">
+                <div class="brand__mark">AC</div>
+                <div class="brand__text">
+                    <h1>Authentication & Access Control Audit</h1>
+                    <p>Secure authN/authZ patterns • Portfolio demonstration</p>
+                </div>
+            </div>
+            <div class="header__links">
+                <a class="btn btn--ghost" href="https://github.com/samihathecss/auth-access-control-audit" target="_blank" rel="noopener noreferrer">GitHub Repo</a>
+                <a class="btn btn--ghost" href="../docs/security-assessment-report.md">Security Assessment Report</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <section class="notice">
+                <div class="notice__icon">⚠️</div>
+                <div class="notice__content">
+                    <strong>SIMULATED DEMO — Not connected to the actual Flask application.</strong>
+                    <span>This is a static, client-side mockup. No backend, network requests, or real authentication are performed.</span>
+                </div>
+            </section>
+
+            <section class="grid">
+                <article class="card">
+                    <header class="card__header">
+                        <h2>Authentication Workflow</h2>
+                        <p>Simulate session-based login/logout behavior</p>
+                    </header>
+                    <div class="card__body">
+                        <div class="form-group">
+                            <label for="userSelect">Select user</label>
+                            <select id="userSelect" class="select">
+                                <option value="alice">alice (role: user)</option>
+                                <option value="bob">bob (role: user)</option>
+                                <option value="admin">admin (role: admin)</option>
+                            </select>
+                        </div>
+                        <div class="btn-row">
+                            <button id="loginBtn" class="btn btn--primary">Simulate Login</button>
+                            <button id="logoutBtn" class="btn btn--secondary">Simulate Logout</button>
+                        </div>
+                        <div class="status-panel">
+                            <h3>Session State</h3>
+                            <div class="status-row">
+                                <span>Authenticated</span>
+                                <span id="authStatus" class="badge badge--muted">NO</span>
+                            </div>
+                            <div class="status-row">
+                                <span>user_id</span>
+                                <span id="sessionUser" class="mono">—</span>
+                            </div>
+                            <div class="status-row">
+                                <span>role</span>
+                                <span id="sessionRole" class="mono">—</span>
+                            </div>
+                            <p class="note">Matches documented behavior: session cleared on login; role checks enforced.</p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <header class="card__header">
+                        <h2>Horizontal Access Control</h2>
+                        <p>User data isolation (ownership checks)</p>
+                    </header>
+                    <div class="card__body">
+                        <p class="card__lead">Alice and Bob each own different records. Attempting to access another user's record is denied.</p>
+                        <div class="record-grid">
+                            <div class="record">
+                                <div class="record__header">
+                                    <span class="record__id">A1</span>
+                                    <span class="record__owner">owner: alice</span>
+                                </div>
+                                <div class="record__title">Alice's Note 1</div>
+                            </div>
+                            <div class="record">
+                                <div class="record__header">
+                                    <span class="record__id">A2</span>
+                                    <span class="record__owner">owner: alice</span>
+                                </div>
+                                <div class="record__title">Alice's Note 2</div>
+                            </div>
+                            <div class="record">
+                                <div class="record__header">
+                                    <span class="record__id">B1</span>
+                                    <span class="record__owner">owner: bob</span>
+                                </div>
+                                <div class="record__title">Bob's Note 1</div>
+                            </div>
+                            <div class="record">
+                                <div class="record__header">
+                                    <span class="record__id">B2</span>
+                                    <span class="record__owner">owner: bob</span>
+                                </div>
+                                <div class="record__title">Bob's Note 2</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="targetRecord">Target record</label>
+                            <select id="targetRecord" class="select">
+                                <option value="A1">A1 (alice)</option>
+                                <option value="B1" selected>B1 (bob)</option>
+                            </select>
+                        </div>
+                        <button id="checkOwnership" class="btn btn--primary">Simulate GET /records/&lt;id&gt;</button>
+                        <div class="result-panel">
+                            <div class="result-row">
+                                <span>Outcome</span>
+                                <span id="ownershipOutcome" class="badge badge--muted">—</span>
+                            </div>
+                            <div class="result-row">
+                                <span>HTTP Status</span>
+                                <span id="ownershipStatus" class="mono">—</span>
+                            </div>
+                            <div class="result-row result-row--block">
+                                <span>Response</span>
+                                <pre id="ownershipResponse" class="code-block">—</pre>
+                            </div>
+                            <p class="note">Matches project behavior: missing/unauthorized return 404 to avoid record enumeration.</p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card card--full">
+                    <header class="card__header">
+                        <h2>Vertical Access Control (RBAC)</h2>
+                        <p>Admin-only functionality protection</p>
+                    </header>
+                    <div class="card__body">
+                        <div class="rbac-grid">
+                            <div>
+                                <p class="card__lead">Regular users are denied access to admin endpoints; administrators are allowed.</p>
+                                <button id="checkAdmin" class="btn btn--primary">Simulate GET /admin</button>
+                            </div>
+                            <div class="result-panel result-panel--compact">
+                                <div class="result-row">
+                                    <span>Outcome</span>
+                                    <span id="adminOutcome" class="badge badge--muted">—</span>
+                                </div>
+                                <div class="result-row">
+                                    <span>HTTP Status</span>
+                                    <span id="adminStatus" class="mono">—</span>
+                                </div>
+                                <div class="result-row result-row--block">
+                                    <span>Response</span>
+                                    <pre id="adminResponse" class="code-block">—</pre>
+                                </div>
+                                <p class="note">Matches behavior: role tampering/unauthorized admin access returns 403 and may clear session as implemented.</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+
+            <section class="card card--full">
+                <header class="card__header">
+                    <h2>Sample Results</h2>
+                    <p>Evidence from the existing project (not produced by this mockup)</p>
+                </header>
+                <div class="card__body">
+                    <div class="evidence-grid">
+                        <div class="evidence-item">
+                            <div class="evidence-item__value">37</div>
+                            <div class="evidence-item__label">Tests Passed</div>
+                            <div class="evidence-item__sub">As documented in README (latest recorded run)</div>
+                        </div>
+                        <div class="evidence-item">
+                            <div class="evidence-item__value">7</div>
+                            <div class="evidence-item__label">Test Categories</div>
+                            <div class="evidence-item__sub">Auth, horizontal authZ, vertical authZ, CSRF, validation, headers, unauth rejection</div>
+                        </div>
+                        <div class="evidence-item">
+                            <div class="evidence-item__value">Local-only</div>
+                            <div class="evidence-item__label">Intended Scope</div>
+                            <div class="evidence-item__sub">127.0.0.1, in-memory data, no production hardening</div>
+                        </div>
+                    </div>
+                    <p class="note note--emphasis">This mockup does <strong>not</strong> execute tests. The "37 passed tests" figure references the existing test suite and captured evidence in the repository.</p>
+                    <div class="links-row">
+                        <a class="btn btn--ghost" href="https://github.com/samihathecss/auth-access-control-audit" target="_blank" rel="noopener noreferrer">View Repository on GitHub</a>
+                        <a class="btn btn--ghost" href="../docs/security-assessment-report.md">Read Security Assessment Report</a>
+                        <a class="btn btn--ghost" href="../evidence/pytest-final.txt">View Captured Test Evidence</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <span>© Authentication & Access Control Audit Demo</span>
+            <span>Educational portfolio project • For demonstration only</span>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
